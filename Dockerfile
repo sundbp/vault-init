@@ -21,10 +21,11 @@ RUN go build \
 RUN strip /bin/vault-init
 RUN upx -q -9 /bin/vault-init
 
+###############
 
-
-
-FROM scratch
+FROM debian:bullseye
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /bin/vault-init /bin/vault-init
+RUN apt-get update && \
+      DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --assume-yes install curl
 CMD ["/bin/vault-init"]
