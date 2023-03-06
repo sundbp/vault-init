@@ -112,13 +112,15 @@ func main() {
 		},
 	}
 
-	fs := http.FileServer(http.Dir(vaultSecretsPlaintextPath))
-	http.Handle("/", fs)
-	log.Print("Listening on :6565")
-	err := http.ListenAndServe(":6565", nil)
-	if err != nil {
-		log.Fatal(err)
-	}
+	go func() {
+		fs := http.FileServer(http.Dir(vaultSecretsPlaintextPath))
+		http.Handle("/", fs)
+		log.Print("Listening on :6565")
+		err := http.ListenAndServe(":6565", nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, syscall.SIGINT, syscall.SIGTERM)
